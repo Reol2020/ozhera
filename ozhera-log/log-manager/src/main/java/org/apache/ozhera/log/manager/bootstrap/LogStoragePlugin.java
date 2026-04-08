@@ -73,6 +73,10 @@ public class LogStoragePlugin implements IPlugin {
                 DataSource dataSource = createDorisDataSource(cluster);
                 registerDorisDataSource(cluster, dataSource);
                 log.info("doris dataSource[{}]Generated successfully[{}]", cluster.getName(), Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId());
+            } else if (LogStorageTypeEnum.CLICKHOUSE == storageTypeEnum) {
+                DataSource dataSource = createCkDataSource(cluster);
+                Ioc.ins().putBean(Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId(), dataSource);
+                log.info("clickhouse dataSource[{}]Generated successfully[{}]", cluster.getName(), Constant.LOG_STORAGE_SERV_BEAN_PRE + cluster.getId());
             }
         } catch (Exception e) {
             log.error("init storage client error,cluster{}", GSON.toJson(cluster), e);
@@ -98,6 +102,14 @@ public class LogStoragePlugin implements IPlugin {
     private DataSource createDorisDataSource(MilogEsClusterDO cluster) {
         String addr = cluster.getAddr();
         PooledDataSource pooledDataSource = new PooledDataSource(driverClass, addr, cluster.getUser(), cluster.getPwd());
+        pooledDataSource.setPoolPingEnabled(true);
+        pooledDataSource.setPoolPingQuery("SELECT 1");
+        pooledDataSource.setPoolMaximumActiveConnections(20);
+        return pooledDataSource;
+    }
+
+    private DataSource createCkDataSource(MilogEsClusterDO cluster) {
+        PooledDataSource pooledDataSource = new PooledDataSource(driverClass, cluster.getAddr(), cluster.getUser(), cluster.getPwd());
         pooledDataSource.setPoolPingEnabled(true);
         pooledDataSource.setPoolPingQuery("SELECT 1");
         pooledDataSource.setPoolMaximumActiveConnections(20);

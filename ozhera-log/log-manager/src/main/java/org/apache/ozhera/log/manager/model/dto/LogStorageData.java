@@ -52,4 +52,8 @@ public class LogStorageData {
     private String updateKeys;
 
     private String updateColumnTypes;
+
+    private Integer storePeriod;
+
+    private String tableName;
 }

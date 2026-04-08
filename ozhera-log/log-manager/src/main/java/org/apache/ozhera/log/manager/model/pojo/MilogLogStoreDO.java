@@ -99,6 +99,11 @@ public class MilogLogStoreDO extends BaseCommon {
     @Comment("Computer room information")
     private String machineRoom;
 
+    @Column(value = "storage_type")
+    @ColDefine(type = ColType.VARCHAR, width = 50)
+    @Comment("Storage type: ELASTICSEARCH / CLICKHOUSE / DORIS")
+    private String storageType;
+
     public MilogLogStoreDO() {
     }
 
