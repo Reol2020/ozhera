@@ -31,6 +31,8 @@ import org.apache.ozhera.log.manager.service.StreamPartitionService;
 import org.apache.ozhera.log.manager.service.extension.common.CommonExtensionServiceFactory;
 import org.apache.ozhera.log.manager.service.extension.resource.ResourceExtensionService;
 import org.apache.ozhera.log.manager.service.extension.resource.ResourceExtensionServiceFactory;
+import org.apache.ozhera.log.manager.service.extension.tail.TailExtensionService;
+import org.apache.ozhera.log.manager.service.extension.tail.TailExtensionServiceFactory;
 import org.apache.ozhera.log.model.MiLogStreamConfig;
 import com.xiaomi.youpin.docean.anno.Service;
 import com.xiaomi.youpin.docean.plugin.config.anno.Value;
@@ -63,8 +65,11 @@ public class StreamPartitionServiceImpl implements StreamPartitionService {
 
     private ResourceExtensionService resourceExtensionService;
 
+    private TailExtensionService tailExtensionService;
+
     public void init() {
         resourceExtensionService = ResourceExtensionServiceFactory.getResourceExtensionService();
+        tailExtensionService = TailExtensionServiceFactory.getTailExtensionService();
     }
 
     @Override
@@ -158,6 +163,7 @@ public class StreamPartitionServiceImpl implements StreamPartitionService {
         }
 
         logConfigNacosService.getStreamConfigNacosPublisher(param.getMachineRoom()).publish(param.getSpaceId(), config);
+        param.getSpaceIds().forEach(spaceId -> tailExtensionService.afterStreamPartitionPush(spaceId, param.getMachineRoom()));
         return true;
     }
 
@@ -171,6 +177,7 @@ public class StreamPartitionServiceImpl implements StreamPartitionService {
                 config.getConfig().remove(param.getUniqueKey());
             }
             logConfigNacosService.getStreamConfigNacosPublisher(param.getMachineRoom()).publish(param.getSpaceId(), config);
+            tailExtensionService.afterStreamPartitionPush(param.getSpaceId(), param.getMachineRoom());
         }
         return true;
     }

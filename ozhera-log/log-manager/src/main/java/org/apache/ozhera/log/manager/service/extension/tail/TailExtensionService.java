@@ -74,4 +74,6 @@ public interface TailExtensionService {
     void publishStreamConfigPostProcess(StreamConfigNacosPublisher streamConfigNacosPublisher, Long spaceId, String motorRoomEn);
 
     List<String> fetchStreamUniqueKeyList(FetchStreamMachineService fetchStreamMachineService, Long spaceId, String motorRoomEn);
+
+    default void afterStreamPartitionPush(Long spaceId, String machineRoom) {}
 }
