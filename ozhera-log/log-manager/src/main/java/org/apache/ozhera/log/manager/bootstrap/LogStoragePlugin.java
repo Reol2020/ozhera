@@ -108,8 +108,13 @@ public class LogStoragePlugin implements IPlugin {
         return pooledDataSource;
     }
 
+    private static final String CK_DRIVER_CLASS = "com.clickhouse.jdbc.ClickHouseDriver";
+    private static final String CK_JDBC_PREFIX = "jdbc:clickhouse://";
+
     private DataSource createCkDataSource(MilogEsClusterDO cluster) {
-        PooledDataSource pooledDataSource = new PooledDataSource(driverClass, cluster.getAddr(), cluster.getUser(), cluster.getPwd());
+        String addr = cluster.getAddr();
+        String url = addr.startsWith(CK_JDBC_PREFIX) ? addr : CK_JDBC_PREFIX + addr;
+        PooledDataSource pooledDataSource = new PooledDataSource(CK_DRIVER_CLASS, url, cluster.getUser(), cluster.getPwd());
         pooledDataSource.setPoolPingEnabled(true);
         pooledDataSource.setPoolPingQuery("SELECT 1");
         pooledDataSource.setPoolMaximumActiveConnections(20);

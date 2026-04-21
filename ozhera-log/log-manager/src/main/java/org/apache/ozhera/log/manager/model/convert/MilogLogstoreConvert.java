@@ -30,8 +30,7 @@ public interface MilogLogstoreConvert {
     MilogLogstoreConvert INSTANCE = Mappers.getMapper(MilogLogstoreConvert.class);
 
     @Mappings({
-            @Mapping(target = "esClusterId", source = "esResourceId"),
-            @Mapping(target = "storageType", source = "storageType")
+            @Mapping(target = "esClusterId", source = "esResourceId")
     })
     MilogLogStoreDO fromCommand(LogStoreParam command);
 }
